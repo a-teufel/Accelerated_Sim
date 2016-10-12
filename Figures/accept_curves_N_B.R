@@ -2,143 +2,114 @@ library(shape)
 library(cowplot)
 library(grid)
 require(gridExtra)
-#draws the prob of accepting a mutation as depended on temp and pop size
+rm(list=ls())
 
-#helper functions to calcuate fitness
 f<-function(b, thresh,x){
-	return( 1/(exp(b*(x-thresh/2))+1))
+	return( 1/(exp(b*(x-thresh))+1))
 }
 
-
-f2<-function(b, thresh,x){
-	return( exp(b*(x-thresh/2))+1)
-}
 
 
 a<-function(i,j,N,beta){
 
-thresh<--100
+thresh<--17
 
-xi<--log(f2(beta,thresh,i))
-xj<--log(f2(beta,thresh,j))
+xi<-f(beta,thresh,i)
+xj<-f(beta,thresh,j)
 
-if(xj > xi){
-  return(1)
-}
-return( exp(-2*N*(xi-xj)))
-
+if(xi==xj){
+	return(1/N)
 }
 
-#fitness to iter over
-fit1<-seq(from=(-53.6-15),to=(-53.6+15),by=.01)
-fit2<--100
 
-fitness<-log(f2(1,-100,fit1))
+top<-(xi/xj)^2
+bottom<-(xi/xj)^(2*N)
 
-#make each line with different beta value
+return((1-top)/(1-bottom))
+
+}
+
+
+fit1<-seq(from=-50,to=-0,by=.1)
+fit2<--90
+
+#differnt beta terms
 row_N1_B1<-NULL
 for(i in 1:length(fit1)){
-
-  row_N1_B1<-rbind(row_N1_B1,a(fit2,fit1[i],1,.25))
+  row_N1_B1<-rbind(row_N1_B1,a(fit2,fit1[i],4,.15))
   
 }
+
 
 row_N1_B5<-NULL
 for(i in 1:length(fit1)){
 
-  row_N1_B5<-rbind(row_N1_B5,a(fit2,fit1[i],1,.075))
+  row_N1_B5<-rbind(row_N1_B5,a(fit2,fit1[i],4,1))
 }
 
 row_N1_B2<-NULL
 for(i in 1:length(fit1)){
 
-  row_N1_B2<-rbind(row_N1_B2,a(fit2,fit1[i],1,.55))
+
+  row_N1_B2<-rbind(row_N1_B2,a(fit2,fit1[i],4,.07))
 }
 
-#set up names
+
 te<-expression(symbol('\256'))
 nam<-paste(paste("delta"),"G of Mutant")
 
-
-#put everything in a data frame to make ggplot happy
 temp<-data.frame(x=fit1,y=row_N1_B1)
 
-p <- ggplot(temp,aes(x=fit1,y=row_N1_B1))+geom_line()+xlim(c(fit1[1],fit1[length(fit1)]))+ylim(c(0,1))
-p<-p+geom_line(aes(x=fit1,y=row_N1_B5),col=c("blue"))
-p<-p+geom_line(aes(x=fit1,y=row_N1_B2),col=c("blue"))+
-geom_segment(aes(x = fit1[length(fit1)/2]+1, y = .52, xend =  fit1[length(fit1)/2]+1, yend =.58), arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
-geom_segment(aes(x = fit1[length(fit1)/2]-3, y = .58, xend =  fit1[length(fit1)/2]-3, yend =.52), arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
+p <- ggplot(temp,aes(x=fit1,y=row_N1_B1))+geom_line()+xlim(c(fit1[1],fit1[length(fit1)]))
+p<-p+geom_line(aes(x=fit1,y=row_N1_B5),col=c("red"))
+p<-p+geom_line(aes(x=fit1,y=row_N1_B2),col=c("red"))+
+geom_segment(aes(x = fit1[length(fit1)/2]+3.2, y = .1413, xend =  fit1[length(fit1)/2]+3.2, yend =.1285), arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
+geom_segment(aes(x = fit1[length(fit1)/2]-6.45, y = .1285, xend =  fit1[length(fit1)/2]-6.45, yend =.1413), arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
 
-geom_segment(aes(x = fit1[length(fit1)/2]+.25, y = .5, xend = fit1[length(fit1)/2]+1.75 , yend = .5),size=.05, arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
-geom_segment(aes(x = fit1[length(fit1)/2]-.25, y = .5, xend = fit1[length(fit1)/2]-6.5 , yend = .5),size=.05, arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
+geom_segment(aes(x = fit1[length(fit1)/2]-1.35, y = .125, xend = fit1[length(fit1)/2]+6 , yend = .125),size=.05, arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
+geom_segment(aes(x = fit1[length(fit1)/2]-2.5, y = .125, xend = fit1[length(fit1)/2]-12 , yend = .125),size=.05, arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
 
-annotate("text",x=fit1[length(fit1)/2]+.5,y=.55,label=paste("beta"),parse=TRUE,col=c("black"))+
-annotate("text",x=fit1[length(fit1)/2]-3.5,y=.55,label=paste("beta"),parse=TRUE,col=c("black"))+
+annotate("text",x=fit1[length(fit1)/2]+2.38,y=.135,label=paste("beta"),parse=TRUE,col=c("black"))+annotate("text",x=fit1[length(fit1)/2]-7.25,y=.135,label=paste("beta"),parse=TRUE,col=c("black"))+
 xlab(label=expression(paste(Delta,"G of Mutant")))+theme(axis.text.x = element_blank(),axis.ticks.x = element_blank())+
-scale_y_continuous(name="Probability of\nAccepting Mutation")
-
-print(fit1[length(fit1)/2])
-print(a(fit2,fit1[length(fit1)/2],1,.55))
-
-
-#change margins and axis
-blank_axes_and_thin_margin <- theme(axis.text = element_text(color="black"),
-                    axis.title = element_text(color="black"),
-                    axis.ticks = element_blank(),
-                    panel.grid = element_blank(),
-                    panel.border = element_blank(),
-		    axis.text.x = element_text(size=24/3, vjust=1.3/3),
- 		    axis.title.x = element_text(size=32/3, vjust=-0.25/3),
-		    axis.title.x = element_text(size = 30),
-                    plot.margin=unit(c(0, 0, 0,0),"mm"))
-
-
+scale_y_continuous(name="Probability of\nAccepting Mutation",limit=c(0,.25))
 
 base <-theme(panel.border=element_blank(), axis.line=element_line())
 
-#combine the base theme changes and the graph
 p<-p+base
 
 
-#make curves for differnt N values
+#data for differnt Ns
 row_N10_B1<-NULL
 for(i in 1:length(fit1)){
 
-  row_N10_B1<-rbind(row_N10_B1,a(fit2,fit1[i],.5,.25))
+  row_N10_B1<-rbind(row_N10_B1,a(fit2,fit1[i],10,.15))
 }
 
 
 row_N100_B1<-NULL
 for(i in 1:length(fit1)){
 
-  row_N100_B1<-rbind(row_N100_B1,a(fit2,fit1[i],2,.25))
+  row_N100_B1<-rbind(row_N100_B1,a(fit2,fit1[i],3,.15))
 }
 
-row_N1000_B1<-NULL
-for(i in 1:length(fit1)){
 
-  row_N1000_B1<-rbind(row_N1000_B1,a(fit2,fit1[i],1000,.25))
-}
-
-#jam into data frame
 temp<-data.frame(x=fit1,y=row_N1_B1)
-
 p2 <- ggplot(temp,aes(x=fit1,y=row_N1_B1))+geom_line()
-p2<-p2+geom_line(aes(x=fit1,y=row_N10_B1),col=c("red"))
-p2<-p2+geom_line(aes(x=fit1,y=row_N100_B1),col=c("red"))+
-geom_segment(aes(x = fit1[length(fit1)/2]+1.75, y = .58, xend =  fit1[length(fit1)/2]+1.75, yend =.52), arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
-geom_segment(aes(x = fit1[length(fit1)/2]-1.25, y = .52, xend =  fit1[length(fit1)/2]-1.25, yend =.58), arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
+p2<-p2+geom_line(aes(x=fit1,y=row_N10_B1),col=c("blue"))
+p2<-p2+geom_line(aes(x=fit1,y=row_N100_B1),col=c("blue"))+
+geom_segment(aes(x = fit1[length(fit1)/2]-3.45, y = .095, xend =  fit1[length(fit1)/2]-3.45, yend =.1078), arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
+geom_segment(aes(x = fit1[length(fit1)/2]-3.45, y = .2212, xend =  fit1[length(fit1)/2]-3.45, yend =.2082), arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
 
-geom_segment(aes(x = fit1[length(fit1)/2]+.25, y = .5, xend = fit1[length(fit1)/2]+3.25 , yend = .5),size=.05, arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
-geom_segment(aes(x = fit1[length(fit1)/2]-.25, y = .5, xend = fit1[length(fit1)/2]-2.75 , yend = .5),size=.05, arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
+geom_segment(aes(x = fit1[length(fit1)/2]-5.75, y = .175, xend = fit1[length(fit1)/2]-5.75 , yend = .25),size=.05, arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
+geom_segment(aes(x = fit1[length(fit1)/2]-5.75, y = .165, xend = fit1[length(fit1)/2]-5.75 , yend = .035),size=.05, arrow = arrow(length = unit(0.1, "cm"),type = "closed"))+
 
-annotate("text",x=fit1[length(fit1)/2]+1,y=.55,label=paste("N[e]"),parse=TRUE,col=c("black"))+
-annotate("text",x=fit1[length(fit1)/2]-2,y=.55,label=paste("N[e]"),parse=TRUE,col=c("black"))+
+annotate("text",x=fit1[length(fit1)/2]-4.69,y=.2125,label=paste("N[e]"),parse=TRUE,col=c("black"))+
+annotate("text",x=fit1[length(fit1)/2]-4.69,y=.1,label=paste("N[e]"),parse=TRUE,col=c("black"))+
 xlab(label=expression(paste(Delta,"G of Mutant")))+theme(axis.text.x = element_blank(),axis.ticks.x = element_blank())+
-scale_y_continuous(name="Probability of\nAccepting Mutation")
+scale_y_continuous(name="Probability of\nAccepting Mutation",limit=c(0,.35),breaks=c(0,.05,.10,.15,.20,.25,.30,.35))
 p2<-p2+base
 
-#put everything into a list so plot_grid will be happy
+
 t<-list()
 t[[1]]<-p
 t[[2]]<-p2

@@ -1,7 +1,7 @@
 Simulation and Figure rendering files for "Accelerated simulation of evolutionary trajectories in origin--fixation models" by Ashley I. Teufel and Claus O. Wilke
 ====================================================
 
-This repository contains the simulation scripts written in Python as well as the figure rendering scripts written in R for the above-mentioned manuscript. The point of this manuscript is to demonstrate the speed of an accelerated method to simulate the origin--fixation model. In order to compare our accelerated method to the traditional one, the procedure by which Rosetta makes a mutation to a protein was chosen for its speed rather than its relationship to biological reality. Hence, if you are interested in accurately simulating protein evolution under realistic biophysical constraints modification to the simulation scripts is necessary.   
+This repository contains the simulation scripts written in Python as well as the figure rendering scripts written in R for the above-mentioned manuscript. This manuscript introduces a new method to simulate evolution under the origin--fixation model. We applied this method to simulations of protein evolution using an all-atom description of protein structure. In order to compare our accelerated method to the traditional one, the procedure by which Rosetta makes a mutation to a protein was chosen for its speed rather than its relationship to biological reality. Hence, if you are interested in accurately simulating protein evolution under realistic biophysical constraints modification to the simulation scripts is necessary.   
 
 # Dependencies
 

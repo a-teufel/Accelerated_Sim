@@ -104,7 +104,7 @@ dens_sc<-ggplot(temp, aes(mh,fill="Accelerated\nSampling"))+geom_density(alpha=.
 
 #sort the data into a new data frame to draw a qq plot
 temp<-data.frame(wf=sort(as.vector(as.numeric(s_wf))),mh=sort(as.vector(as.numeric(s_mh))))
-qq<- ggplot(data=temp, aes(x=(wf),y=(mh))) + geom_point()+geom_smooth(method="lm",formula = y ~ x,se=FALSE,colour="red")+ylim(-.026,.026)+xlim(-.026,.026)
+qq<- ggplot(data=temp, aes(x=(wf),y=(mh))) + geom_point()+geom_abline(colour = "red", size = 1)+ylim(-.026,.026)+xlim(-.026,.026)
 qq<-qq+ylab("Selection Coefficient\nAccelerated Sampling")+xlab("Selection Coefficient Original Sampling")
 
 

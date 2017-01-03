@@ -65,13 +65,12 @@ temp<-data.frame(wf=sort(as.vector(as.numeric(d))),mh=sort(as.vector(as.numeric(
 
 qq<- ggplot(data=temp, aes(x=(wf),y=(mh))) + geom_point()+geom_abline(colour = "red", size = 1)+xlim(1,20)+ylim(1,20)
 qq<-qq+ylab("# of Subsitutions\nwith Accelerated Sampling")+xlab("# of Subsitutions with Original Sampling")
-qq<-qq + annotate("text",x = 15, y = 19, label = lm_eqn(temp), parse = TRUE,size=5)
 qq
 
 #unsorted into a data frame for the position based number of substitutions
 temp<-data.frame(wf=d,mh=d2)
 pos<-ggplot(temp,aes(wf,mh))+geom_point()+ ylim(0, 20)+ xlim(0,20)+xlab("# of Substitutions per Site with Original Sampling")+ylab("# of Substitutions per Site\nwith Accelerated Sampling")
-pos<-pos +geom_abline(colour = "red", size = 1)
+pos<-pos +geom_smooth(method="lm",formula = y ~ x,se=FALSE,colour="red")
 pos<-pos + annotate("text",x = 15, y = 19, label = lm_eqn(temp), fontface=1,parse = TRUE,size=5)
 pos
 
@@ -156,47 +155,73 @@ d2_3<-tabulate(as.numeric(sit2_3))
 
 temp_wf_1<-data.frame(wf=d_1,mh=d_2)
 g1<-ggplot(temp_wf_1,aes(wf,mh))+geom_point()+ ylim(0, 10)+ xlim(0,10)+xlab("# Sub. Orig. Rep 1")+ylab("# Sub. Orig. Rep 2")
-g1<-g1 +geom_abline(colour = "red", size = 1)
+g1<-g1 +geom_smooth(method="lm",formula = y ~ x,se=FALSE,colour="red")
 g1<-g1 + annotate("text",x = 4, y = 10, label = lm_eqn(temp_wf_1), fontface=1,parse = TRUE,size=5)
 g1
 
 temp_wf_2<-data.frame(wf=d_1,mh=d_3)
 g2<-ggplot(temp_wf_2,aes(wf,mh))+geom_point()+ ylim(0, 10)+ xlim(0,10)+xlab("# Sub. Orig. Rep 1")+ylab("# Sub. Orig. Rep 3")
-g2<-g2 +geom_abline(colour = "red", size = 1)
+g2<-g2 +geom_smooth(method="lm",formula = y ~ x,se=FALSE,colour="red")
 g2<-g2 + annotate("text",x = 4, y = 10, label = lm_eqn(temp_wf_2), fontface=1,parse = TRUE,size=5)
 g2
 
 temp_wf_3<-data.frame(wf=d_2,mh=d_3)
 g3<-ggplot(temp_wf_3,aes(wf,mh))+geom_point()+ ylim(0, 10)+ xlim(0,10)+xlab("# Sub. Orig. Rep 2")+ylab("# Sub. Orig. Rep 3")
-g3<-g3 +geom_abline(colour = "red", size = 1)
+g3<-g3 +geom_smooth(method="lm",formula = y ~ x,se=FALSE,colour="red")
 g3<-g3 + annotate("text",x = 4, y = 10, label = lm_eqn(temp_wf_3), fontface=1,parse = TRUE,size=5)
 g3
 
 
 temp_mh_1<-data.frame(wf=d2_1,mh=d2_2)
 g4<-ggplot(temp_mh_1,aes(wf,mh))+geom_point()+ ylim(0, 10)+ xlim(0,10)+xlab("# Sub. Accel. Rep 1")+ylab("# Sub. Accel. Rep 2")
-g4<-g4 +geom_abline(colour = "red", size = 1)
+g4<-g4 +geom_smooth(method="lm",formula = y ~ x,se=FALSE,colour="red")
 g4<-g4 + annotate("text",x = 4, y = 10, label = lm_eqn(temp_mh_1), fontface=1,parse = TRUE,size=5)
 g4
 
 
 temp_mh_2<-data.frame(wf=d2_1,mh=d2_3)
 g5<-ggplot(temp_mh_2,aes(wf,mh))+geom_point()+ ylim(0, 10)+ xlim(0,10)+xlab("# Sub. Accel. Rep 1")+ylab("# Sub. Accel. Rep 3")
-g5<-g5 +geom_abline(colour = "red", size = 1)
+g5<-g5 +geom_smooth(method="lm",formula = y ~ x,se=FALSE,colour="red")
 g5<-g5 + annotate("text",x = 4, y = 10, label = lm_eqn(temp_mh_2), fontface=1,parse = TRUE,size=5)
 g5
 
 
 temp_mh_3<-data.frame(wf=d2_2,mh=d2_3)
 g6<-ggplot(temp_mh_3,aes(wf,mh))+geom_point()+ ylim(0, 10)+ xlim(0,10)+xlab("# Sub Accel. Rep 2")+ylab("# Sub. Accel. Rep 3")
-g6<-g6 +geom_abline(colour = "red", size = 1)
+g6<-g6 +geom_smooth(method="lm",formula = y ~ x,se=FALSE,colour="red")
 g6<-g6 + annotate("text",x = 4, y = 10,  fontface=1,label = lm_eqn(temp_mh_3),parse = TRUE,size=5)
 g6
 
 
+
+temp_mh_vs<-data.frame(wf=d_1,mh=d2_1)
+g7<-ggplot(temp_mh_vs,aes(wf,mh))+geom_point()+ ylim(0, 10)+ xlim(0,10)+xlab("# Sub.\nOrig. Rep 1")+ylab("# Sub.\nAccel. Rep 1")
+g7<-g7 +geom_smooth(method="lm",formula = y ~ x,se=FALSE,colour="red")
+g7<-g7 + annotate("text",x = 4, y = 10,  fontface=1,label = lm_eqn(temp_mh_vs),parse = TRUE,size=3)
+g7
+
+
+temp_mh_vs_2<-data.frame(wf=d_2,mh=d2_2)
+g8<-ggplot(temp_mh_vs_2,aes(wf,mh))+geom_point()+ ylim(0, 10)+ xlim(0,10)+xlab("# Sub.\nOrig. Rep 2")+ylab("# Sub.\nAccel. Rep 2")
+g8<-g8 +geom_smooth(method="lm",formula = y ~ x,se=FALSE,colour="red")
+g8<-g8 + annotate("text",x = 4, y = 10,  fontface=1,label = lm_eqn(temp_mh_vs_2),parse = TRUE,size=3)
+g8
+
+
+temp_mh_vs_3<-data.frame(wf=d_3,mh=d2_3)
+g9<-ggplot(temp_mh_vs_3,aes(wf,mh))+geom_point()+ ylim(0, 10)+ xlim(0,10)+xlab("# Sub.\nOrig. Rep 3")+ylab("# Sub.\nAccel. Rep 3")
+g9<-g9 +geom_smooth(method="lm",formula = y ~ x,se=FALSE,colour="red")
+g9<-g9 + annotate("text",x = 4, y = 10,  fontface=1,label = lm_eqn(temp_mh_vs_3),parse = TRUE,size=3)
+g9
+
+
+plot_grid(g1,g2,g3,g4,g5,g6,g7,g8,g9,labels=c("A","B","C","D","E","F","G","H","I"))
+
 pdf("by_site_all_V_all.pdf", onefile=FALSE)
-plot_grid(g1,g2,g3,g4,g5,g6,labels=c("A","B","C","D","E","F"))
+plot_grid(g1,g2,g3,g4,g5,g6,g7,g8,g9,labels=c("A","B","C","D","E","F","G","H","I"),align='h')
 dev.off()
+
+
 
 
 

@@ -10,7 +10,7 @@ y<-c(100/1.5375,50/1.35,25/.99)
 
 temp<-data.frame(x=x,y=y)
 
-last<-ggplot(data=temp, aes(x=x, y=y)) +geom_point()+xlab("Population Size\nOriginal Sampling")+ylab("Converted Population Size\nAccelerated Sampling")+xlim(0,100)+ylim(0,100)+geom_smooth(method="lm",se=FALSE,colour="red",fullrange=TRUE)
+last<-ggplot(data=temp, aes(x=x, y=y)) +geom_point()+xlab(expression(paste("Original Sampling ",N[e])))+ylab(expression(paste("Accelerated Sampling Rescaled ", N[e])))+xlim(0,100)+ylim(0,100)+geom_smooth(method="lm",se=FALSE,colour="red",fullrange=TRUE)
 
 #fits linear model to data
 smooth_vals = lm(y~x)

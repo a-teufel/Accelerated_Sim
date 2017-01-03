@@ -50,11 +50,23 @@ wf_r_m<-rowMeans(by_15_wf)
 dat<-data.frame(revert=1:15,mh=as.vector(as.numeric(by_15)),wf=as.vector(as.numeric(by_15_wf)),wf_mean=as.vector(as.numeric(wf_r_m)),mh_mean=as.vector(as.numeric(mh_r_m)))
 
 
+
+dat2<-data.frame(x=1:15,y=as.vector(as.numeric(by_15)))
+
+b<-nls2(y~I(c*exp(a*x)+b),data=dat2,start=list(a=-.47,b=.06,c=.02))
+summary(b)
+
+dat3<-data.frame(x=1:15,y=as.vector(as.numeric(by_15_wf)))
+
+b2<-nls2(y~I(c*exp(a*x)+b),data=dat3,start=list(a=-.47,b=.06,c=.02))
+summary(b2)
+
+
 lp<-ggplot(data=dat, aes(x=revert, y=mh))
 lp<-lp+geom_point(aes(x=revert,y=wf_mean,colour="Original\nSampling"),dat)
 lp<-lp+geom_point(aes(x=revert,y=mh_mean,colour="Accelerated\nSampling"),dat)
-lp<-lp+geom_smooth(aes(x=revert,y=mh,colour="Accelerated\nSampling"),dat,fill=cbbPalette[1],method=gam,formula=y~I(log(x))) 
-lp<-lp+geom_smooth(aes(x=revert,y=wf,colour="Original\nSampling"),dat,fill=cbbPalette[2],method=gam,formula=y~I(log(x))) 
+lp<-lp+geom_smooth(aes(x=revert,y=mh,colour="Accelerated\nSampling"),dat,fill=cbbPalette[1],method="lm",formula=y~I(0.0208907*exp(-0.4791466*x)+0.0644027) ) 
+lp<-lp+geom_smooth(aes(x=revert,y=wf,colour="Original\nSampling"),dat,fill=cbbPalette[2],method="lm",formula=y~I(0.0213202*exp(-0.6506967*x)+0.0651166) ) 
 lp<-lp+labs(x="Markov Step",y="Normalized Probability of Accepting Reversion")
 lp<-lp+guides(color=guide_legend(override.aes=list(fill=NA)))
 lp<-lp+scale_x_continuous(breaks=seq(1,15))+theme(legend.key.size = unit(2, 'lines'), legend.key = element_rect(fill = "transparent", colour = "transparent"))+scale_colour_manual(name="",values=cols) +theme(legend.justification = c(1, 1), legend.position = c(1, 1))

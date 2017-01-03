@@ -35,12 +35,9 @@ def main():
     #Amino acids, notice there is no C
     AAs = ("A","D","E","F","G","H","I","K","L","M","N","P","Q","R","S","T","V","W","Y")
     #Number of mutations to accept
-    #max_accept_mut = 1500
-    max_accept_mut=500
+    max_accept_mut = 1500
     #Population size
-    N = 100/1.5375
-    #N=50/1.35
-    #N=25
+    N = 100
     #Beta (temp term)
     beta = 1
 
@@ -58,6 +55,7 @@ def main():
 
     #Set up MoveMap.
     mm = MoveMap()
+    #change these for more or less flexability
     mm.set_bb(True)
     mm.set_chi(True)
 
@@ -79,14 +77,14 @@ def main():
     post_pre_packing_score = sf(initial_pose)
 
     #Set threshold for selection 
-    threshold = post_pre_packing_score/2
+    threshold = pre_pre_packing_score/2
 
     data.append('WT,' + str(post_pre_packing_score) + ',0.0 ,0.0,0\n')
 
     #number of residues to select from
     n_res = initial_pose.total_residue()
 
-    #start evolution
+    #start sim
     i=0
     gen=0
     while i < max_accept_mut:
@@ -118,6 +116,7 @@ def main():
 	        proposed_res = AAs[new_mut_key]
 
 	    #make the mutation
+	    #this is actually a really bad model, and probably shouldnt be used. In new version is repack the whole thing, then reminimize, I should also backrub it. 
 	    mutant_pose = mutate_residue(initial_pose, mut_location, proposed_res, PACK_RADIUS, sf)
 
 	    #score mutant
@@ -132,7 +131,7 @@ def main():
 		#create a name for the mutant if its going to be kept 
 		variant_name = res.name1() + str(initial_pose.pdb_info().number(mut_location)) + str(proposed_res)
 		
-		# Assuming 1000 mut burn in phase
+		# Assuming 1000 burn in phase, take this if out if you want to store everything
 		if i>1000:
 		   #save name and energy change
 	    	   data.append(variant_name + "," + str(variant_score) + "," + str(variant_score - post_pre_packing_score) + "," + str(probability) + "," + str(gen) + "\n")
@@ -150,7 +149,7 @@ def main():
     print '\nMutations and scoring complete.'
     t1 = time()
     # Output results.
-    data_filename = pdb_file[:-5] + '_variant_scores_mh_5000.csv'
+    data_filename = pdb_file[:-5] + 'mh_1500_rep3.csv'
     with open(data_filename, "w") as f:
         f.writelines(data)
 
@@ -164,12 +163,13 @@ def main():
 #score functions for met-hastings selection
 def calc_prob_mh(stab_mut, stab_org, N, beta, thresholds):
  
-  xi = calc_x(stab_org, beta, thresholds)
-  xj = calc_x(stab_mut, beta, thresholds)
+  xi = calc_x_fix(stab_org, beta, thresholds)
+  xj = calc_x_fix(stab_mut, beta, thresholds)
 
   if xj > xi:
     return((1.0))
   else:
+    #change if you want to use exp expression, you also need to change how the score is calculated
     #exponent = -2 * float(N) * (xi - xj)
     ans=pow(float(xj/xi),2*float(N)-2)
     return(ans)
@@ -196,7 +196,7 @@ def calc_prob_fix(stab_mut, stab_org, N, beta, thresholds):
   return (p)
 
 
-
+#score considering the thresh value
 def calc_x_fix(data, beta, threshold):
   total = 0
   exponent = float(beta) * (float(data) - float(threshold))
@@ -206,8 +206,7 @@ def calc_x_fix(data, beta, threshold):
 def calc_x(data, beta, threshold):
   total = 0
   exponent = float(beta) * (float(data) - float(threshold))
-  #total += -math.log(safe_calc(exponent) + 1)
-  total = 1/(safe_calc(exponent)+1)
+  total += -math.log(safe_calc(exponent) + 1)
   return(total)
 
 

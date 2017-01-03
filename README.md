@@ -5,4 +5,4 @@ This repository contains the simulation scripts written in Python as well as the
 
 # Dependencies
 
-To run the simulation scripts you must have python 2.7, Rosetta, and Pyrosetta installed. Pyrosetta must be included in the path that you are running the scripts from.  Most of the figure scripts depend on the R libraries cowplots, ggplot2, and grid. Figures of directed graphs also need qgraph and igraph.  
+To run the simulation scripts you must have python 2.7, Rosetta, and Pyrosetta installed. Pyrosetta must be included in the path that you are running the scripts from.  Most of the figure scripts depend on the R libraries cowplot, ggplot2, and grid. Figures of directed graphs also need qgraph and igraph.  

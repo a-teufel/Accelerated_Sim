@@ -19,7 +19,12 @@ def main():
     max_accept_mut = 100000
     #Population size
     N = 10
-  
+
+    #Place holder variables that are not used
+    thresholds = 0
+    beta = 0
+	
+	
     #set staring position
     current_state=States[0]
     current_score=Scores[0]
